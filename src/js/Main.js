@@ -224,6 +224,7 @@ function MainContainer() {
             start = plan.split('~')[0]
             end = plan.split('~')[1]
 
+            
             console.log(ID, companyname, start, end, img, link);
 
             axios
