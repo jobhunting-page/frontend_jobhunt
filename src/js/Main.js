@@ -5,6 +5,7 @@ import axios from "axios";
 // import news from "./json/news.json"
 import "./Main.css";
 import Swal from "sweetalert2";
+import banner from '../images/banner.png';
 
 function Main() {
     return (
@@ -224,7 +225,6 @@ function MainContainer() {
             start = plan.split('~')[0]
             end = plan.split('~')[1]
 
-            
             console.log(ID, companyname, start, end, img, link);
 
             axios
@@ -267,19 +267,9 @@ function MainContainer() {
     return (
         <div className="banner_box">
 
-            <img className="bannerImg" alt="banner_01" src="img/job_banner.PNG" />
+            <img className="bannerImg" alt="banner_01" src={banner} />
 
-            <br></br>
-            <span className="banner_text">원하는 회사의 정보를 얻어가세요!</span>
-            <span className="banner_text2">Find You Want Company</span>
-            <br></br>
-
-            <div className="serach_input">
-                <input type="text" placeholder="회사를 입력하세요" onChange={event => { setSearch(event.target.value) }} />
-                <button className="search_submit">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </div>
+            <input type="text" className="input" placeholder="회사를 입력하세요" onChange={event => { setSearch(event.target.value) }} />
 
             <br />
             <div className="SearchResultForm">
