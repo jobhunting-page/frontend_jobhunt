@@ -1,0 +1,269 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import "./MyPage.css";
+import Header from './Form/Header';
+import axios from "axios";
+import Card from './components/Card';
+
+function MyPage() {
+
+  return (
+    <div className="MyPageContent">
+      <Header />
+      <MyPageContent />
+
+      
+    </div>
+  )
+}
+
+function MyPageContent() {
+  const ID = sessionStorage.getItem("tokenId")
+  const [inputData, setInputData] = useState([])
+  const run = () => {
+    axios
+        .get("/api/mypage", {
+            headers: {
+                Authorization: `Bearer ${sessionStorage.getItem("tokenId")}`,
+                refreshTokenId: `Bearer ${sessionStorage.getItem("refreshTokenId")}`
+            }
+        })
+        .then((res) => {
+            console.log("!!", res.data);
+            console.log(sessionStorage.getItem("tokenId"));
+            console.log(sessionStorage.getItem("refreshTokenId"));
+            setInputData(res.data)
+
+            // if (res.data == true) {
+            //     // console.log(res.data)
+
+            // } 
+            if (res.data[0] === "false") {
+                sessionStorage.removeItem("tokenId")
+                console.log(res.data);
+                axios.get("/api/refresh", {
+                    headers: {
+                        refreshTokenId: `Bearer ${sessionStorage.getItem("refreshTokenId")}`
+                    }
+                }).then((res) => {
+                    console.log(res.data);
+                    sessionStorage.setItem("tokenId", res.data)
+                    
+                    if (res.data[0] == "false"){
+                        
+
+                
+                        Swal.fire({
+                            title: '로그인 유효시간 종료!',
+                            text: '로그인 페이지로 이동하시겠습니까?',
+                            icon: 'warning',
+    
+                            showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+                            confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+                            cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
+                            confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+                            cancelButtonText: '취소', // cancel 버튼 텍스트 지정
+    
+                            reverseButtons: true, // 버튼 순서 거꾸로
+
+                            
+    
+                        }).then(result => {
+
+                            sessionStorage.clear()
+                            // 만약 Promise리턴을 받으면,
+                            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+    
+                                window.location.href = "/login";
+                            }else{
+                                window.location.href = "/";
+                            }
+                        });
+                    }else if (res.data == sessionStorage.getItem("tokenId")) { 
+                      window.location.href = "/mypage";
+                    }
+                })
+            } 
+            
+        })
+}
+
+useEffect(run, []);
+
+  console.log(inputData);
+
+  const jlink = (link, e) => {
+    // console.log(link);
+
+    if (link != null) {
+        const jobKorea = "https://www.jobkorea.co.kr" + link;
+        window.open(jobKorea);
+    } else {
+        window.location.href = "/";
+    }
+}
+
+const bookmark = (e, companyname, plan, img, link) => {
+  if (ID === null) {
+      Swal.fire({
+          title: '즐겨찾기 기능은 로그인 후 가능합니다!',
+          text: '로그인 페이지로 이동하겠습니까?',
+          icon: 'warning',
+
+          showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+          confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+          cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
+          confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+          cancelButtonText: '취소', // cancel 버튼 텍스트 지정
+
+          reverseButtons: true, // 버튼 순서 거꾸로
+
+      }).then(result => {
+          // 만약 Promise리턴을 받으면,
+          if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+
+              window.location.href = "/login";
+          }
+      });
+  }
+
+
+
+
+  if (ID !== null) {
+      var start, end
+
+      start = plan.split('~')[0]
+      end = plan.split('~')[1]
+
+      console.log(ID, companyname, start, end, img, link);
+
+      axios
+          .post("/company-save",
+              {
+                  companyname: companyname,
+                  companyimg: img,
+                  company_start: start,
+                  company_end: end,
+                  company_link: link
+
+              },{headers: {Authorization: `Bearer ${sessionStorage.getItem("tokenId")}`}}
+              ).then(result => {
+                
+                console.log(result);
+            });
+  }
+
+}
+
+const delete_bookmark= (e, companyname) => {
+  if (ID != null) {
+      Swal.fire({
+          title: '즐겨찾기 삭제를 하시겠습니까?',
+
+          icon: 'warning',
+
+          showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+          confirmButtonColor: '#3085d6', // confrim 버튼 색깔 지정
+          cancelButtonColor: '#d33', // cancel 버튼 색깔 지정
+          confirmButtonText: '승인', // confirm 버튼 텍스트 지정
+          cancelButtonText: '취소', // cancel 버튼 텍스트 지정
+
+          reverseButtons: true, // 버튼 순서 거꾸로
+
+      }).then(result => {
+          // 만약 Promise리턴을 받으면,
+          if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+
+            axios
+            .post("/company-delete",
+                {
+                    companyname: companyname
+  
+                },{headers: {Authorization: `${sessionStorage.getItem("tokenId")}`}}
+                ).then(result=>{
+
+                    if(result.data==1){
+                      window.location.reload();
+                    }
+                    else{
+                      console.log("삭제실패");
+                    }
+                })
+          }
+      });
+  }
+
+}
+
+  return (
+      <div class="metee_mypage_main_wraper_join_style">
+            <span css={css`
+                display: block;
+                font-family: 'Pretendard-ExtraBold';
+                font-size: 1.8em;
+                letter-spacing: -0.03em;
+                color: #333D4B;
+            `}> 관심을 가지고 있는 채용 공고를 한 눈에 보여드려요 </span>
+            <div className="Card1">
+            <div className="c1image">
+                {inputData[0] && inputData[0].bookmark.map((v) => {
+                    console.log(v);
+                let plan = v.bookMark_Start_Date + "~" + v.bookMark_End_Date;
+                return <ItemBox name={v.bookMarkName} plan={plan} link={v.company_link} img={v.bookMarkImg} />
+            })}
+            </div>
+        </div>
+          
+          <div align="center" className="profile_correction">
+			  </div>
+    </div>
+  )
+
+
+  function ItemBox(props) {
+    return (
+        <>
+        <Card title={props.name} plan={props.plan} content={props.content} src={props.img} link={props.link} state={props.state} onClick={(e) => { bookmark(e, props.name, props.plan, props.img, props.link, props.bookmark) }} bookmark={inputData[0]}/>
+        <div className="container">
+            <div className="card u-clearfix">
+                <div className="card-media" onClick={(e) => { jlink(props.link) }}>
+                    <img src={props.img} alt="" className="card-media-img" />
+                </div>
+                <img src="img/delete.png" className="delete-img" width="10px" onClick={(e) => { delete_bookmark(e,props.name) }}></img>
+
+                <div className="card-body">
+                    <h2 className="card-body-heading">{props.name}</h2>
+                    <div className="card-body-options">
+                        <div className="card-body-option card-body-option-favorite">
+                            <svg fill="#d12e46" height="26" viewBox="0 0 24 24" width="26" xmlns="http://www.w3.org/2000/svg" onClick={(e) => { bookmark(e, props.name, props.plan, props.img, props.link) }}>
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </div>
+                        <div className="card-body-option card-body-option-share">
+                            <svg fill="#9C948A" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <br />
+                    <div className="card-button card-button-link">
+                        <span>{props.plan}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </>
+
+    )
+}
+}
+
+
+
+export default MyPage;
