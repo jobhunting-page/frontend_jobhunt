@@ -2,7 +2,7 @@ import "./join.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import logo from '../../images/logo.png';
+import logo from "../../images/logo.png";
 import { useNavigate } from "react-router-dom";
 
 function Join() {
@@ -10,6 +10,7 @@ function Join() {
   const [pass, setInputPw] = useState("");
   const [pass2, setInputPw2] = useState("");
   const [nickname, setInputnickname] = useState("");
+  const [username, setInputusername] = useState("");
   const [sex, setInputSex] = useState("");
   const [birth, setInputBirth] = useState("");
   const [phone, setInputPhone] = useState("");
@@ -27,12 +28,12 @@ function Join() {
   };
 
   const clickBtn = (params, e) => {
-    if(params === "/") {
-        navigate('/');
-    } else if(params === "Join") {
-        navigate('/join');
+    if (params === "/") {
+      navigate("/");
+    } else if (params === "Join") {
+      navigate("/join");
     }
-};
+  };
 
   const handleInputPw = (e) => {
     setInputPw(e.target.value);
@@ -44,6 +45,7 @@ function Join() {
 
   const handleInputnickname = (e) => {
     setInputnickname(e.target.value);
+    setInputusername(e.target.value);
   };
 
   const handleInputSex = (e) => {
@@ -58,115 +60,61 @@ function Join() {
     setInputPhone(e.target.value);
   };
 
-  const idCheck = () => {
-    axios
-      .post("/idCheck", { email: email })
-      .then((idRes) => {
-        console.log(idRes);
-        console.log("idRes.data :: ", idRes.data);
-
-        if (idRes.data == 1) {
-          setIdMes("가능");
-          setId(1);
-        } else if (idRes.data == 0) {
-          setIdMes("불가능");
-          // alert("아이디중복됨")
-          document.getElementById("email").focus();
-          setId(0);
-        }
-      })
-      .catch();
-      
-  };
-
-  const pwCheck = () => {
-    axios
-      .post("/passCheck", { pass: pass, pass2: pass2 })
-      .then((passRes) => {
-        console.log(passRes);
-        console.log("passRes.data :: ", passRes.data);
-
-        if (passRes.data == 1) {
-          setPassMes("일치");
-          setPass(1);
-        } else if (passRes.data == 0) {
-          setPassMes("불일치");
-          setPass(0);
-        }
-      })
-      .catch();
-  };
-
-  const nickCheck = () => {
-    axios
-      .post("/nickname", { nickname: nickname })
-      .then((nickRes) => {
-        console.log(nickRes);
-        console.log("nickRes.data :: ", nickRes.data);
-
-        if (nickRes.data == 1) {
-          setNickNameMes("가능");
-          setNickName(1);
-        } else if (nickRes.data == 0) {
-          setNickNameMes("중복");
-          setNickName(0);
-        }
-      })
-      .catch();
-  };
-
   const onClickJoin = () => {
     // alert(email, pass, pass2, nickname, sex, birth, phone)
     if (
-      email != "" &&
-      pass != "" &&
-      pass2 != "" &&
-      nickname != "" &&
-      sex != "" &&
-      birth != "" &&
-      phone != ""
+      email !== "" &&
+      pass !== "" &&
+      pass2 !== "" &&
+      nickname !== "" &&
+      sex !== "" &&
+      birth !== "" &&
+      phone !== ""
     ) {
-      if (id_ == 1 && pass_ == 1 && nickname_ == 1) {
+      if (id_ === 1 && pass_ === 1 && nickname_ === 1) {
         console.log("click Join");
-        console.log("email : ", email);
+        //console.log("email : ", email);
         console.log("PW : ", pass);
-        console.log("PW2 : ", pass2);
+        //console.log("PW2 : ", pass2);
         console.log("nickname : ", nickname);
-        console.log("sex : ", sex);
-        console.log("birth : ", birth);
-        console.log("phone : ", phone);
+        console.log("username: ", username);
+        //console.log("sex : ", sex);
+        //console.log("birth : ", birth);
+        //console.log("phone : ", phone);
         axios
-          .post("http://localhost:8080/join", {
-            email: email,
-            pass: pass,
-            pass2: pass2,
+          .post("/api/signup", {
+            //email: email,
+            password: pass,
+            //pass2: pass2,
             nickname: nickname,
-            sex: sex,
-            birth: birth,
-            phone: phone,
+            username: username,
+            //sex: sex,
+            //birth: birth,
+            //phone: phone,
           })
           .then((joinRes) => {
-            if (joinRes.data == 1) {
+            console.log(joinRes);
+            document.location.href = "/";
+            if (joinRes.data) {
               Swal.fire({
-                icon: 'success',
-                title: '회원가입 성공!',
+                icon: "success",
+                title: "회원가입 성공!",
                 // timer: 100000,
-            }).then((q) => {
-              if(q.isConfirmed){
-                document.location.href = "/";
-              }
-            }
-            );
+              }).then((q) => {
+                if (q.isConfirmed) {
+                  document.location.href = "/";
+                }
+              });
             }
           })
           .catch(function (error) {
             console.log(error);
           });
-      } else if (id_ == 0) {
+      } else if (id_ === 0) {
         alert("아이디가 중복됩니다");
-      } else if (pass_ == 0) {
+      } else if (pass_ === 0) {
         alert("암호가 일치하지 않습니다");
-      } else if (nickname_ == 0) {
+      } else if (nickname_ === 0) {
         alert("닉네임이 중복됩니다");
       }
     } else {
@@ -182,25 +130,50 @@ function Join() {
     console.log(birth);
     console.log(phone);
   };
-  
+
   return (
-	<div className="JoinForm">
-      <div className="navLogo" onClick={(e) => {clickBtn("/", e)}}>
-        <img src={logo} alt="홈페이지 로고" className="logo_header"/>
+    <div className="JoinForm">
+      <div
+        className="navLogo"
+        onClick={(e) => {
+          clickBtn("/", e);
+        }}
+      >
+        <img src={logo} alt="홈페이지 로고" className="logo_header" />
       </div>
-	  {/* <div className="InputName">
+      {/* <div className="InputName">
 	  	<input type="text" path="name" placeholder="이름" id="name" name="name" value={name} onChange={handleInputName} />
 	  </div> */}
-	  <div className="InputNickName">
-	  	<input type="text" path="nickname" placeholder="닉네임" id="nickname" name="nickname" value={nickname} onChange={handleInputnickname} onKeyUp={nickCheck} />
-      <div style={ nickname_ == 0 ? {display:"block"} : {display:"none"}}>닉네임이 중복됩니다</div>
-	  </div>
-    <div className="InputBirth">
-		<div className="Birth">
-		</div>
-		<div className="InputBirthForm">
-			<input type="text" maxLength="8" onChange={handleInputBirth} id="birth" name="birth" value={birth} placeholder="생년월일 (8자)" />
-			{/* <select name="month">
+      <div className="InputNickName">
+        <input
+          type="text"
+          path="nickname"
+          placeholder="닉네임"
+          id="nickname"
+          name="nickname"
+          value={nickname}
+          onChange={handleInputnickname}
+          //onKeyUp={nickCheck}
+        />
+        <div
+          style={nickname_ == 0 ? { display: "block" } : { display: "none" }}
+        >
+          닉네임이 중복됩니다
+        </div>
+      </div>
+      <div className="InputBirth">
+        <div className="Birth"></div>
+        <div className="InputBirthForm">
+          <input
+            type="text"
+            maxLength="8"
+            onChange={handleInputBirth}
+            id="birth"
+            name="birth"
+            value={birth}
+            placeholder="생년월일 (8자)"
+          />
+          {/* <select name="month">
 				<option value="월">월</option>
 				<option value="1">1</option>
 				<option value="2">2</option>
@@ -215,34 +188,73 @@ function Join() {
 				<option value="11">11</option>
 				<option value="12">12</option>
 			</select> */}
-			{/* <input type="text" maxLength="2" placeholder="일" /> */}
-		</div>
-	  </div>
-	  <div className="InputSex">
-		<select name="sex" onChange={handleInputSex}>
-			<option value="">성별을 선택해주세요</option>
-			<option value="M">남</option>
-			<option value="W">여</option>
-			<option value="N">선택 안함</option>
-		</select>
-	  </div>
-	  <div className="InputPhone">
-	  	<input type="text" path="phone" name="phone" value={phone} placeholder="전화번호" onChange={handleInputPhone} />
-	  </div>
-    <div className="InputId">
-	  	<input type="text" path="email" placeholder="이메일" id="email" name="email" value={email} onChange={handleInputEmail} onKeyUp={idCheck}/>
-      <div style={ id_ == 0 ? {display:"block"} : {display:"none"}}>아이디가 중복됩니다</div>
-	  </div>
-    <div className="InputPw">
-	  	<input type="password" path="pass" placeholder="비밀번호" id="pass" name="pass" value={pass} onChange={handleInputPw} />
-	  </div>
-	  <div className="InputPwCheck">
-	  	<input type="password" path="pass2" placeholder="비밀번호 확인" id="pass2" name="pass2" value={pass2} onChange={handleInputPw2} onKeyUp={pwCheck} />
-      <div style={ pass_ == 0 ? {display:"block"} : {display:"none"}}>비밀번호가 일치하지 않습니다</div>
-	  </div>
-	  <div className="LoginBtn" onClick={onClickJoin}>가입하기</div>
-	</div>
-  )
+          {/* <input type="text" maxLength="2" placeholder="일" /> */}
+        </div>
+      </div>
+      <div className="InputSex">
+        <select name="sex" onChange={handleInputSex}>
+          <option value="">성별을 선택해주세요</option>
+          <option value="M">남</option>
+          <option value="W">여</option>
+          <option value="N">선택 안함</option>
+        </select>
+      </div>
+      <div className="InputPhone">
+        <input
+          type="text"
+          path="phone"
+          name="phone"
+          value={phone}
+          placeholder="전화번호"
+          onChange={handleInputPhone}
+        />
+      </div>
+      <div className="InputId">
+        <input
+          type="text"
+          path="email"
+          placeholder="이메일"
+          id="email"
+          name="email"
+          value={email}
+          onChange={handleInputEmail}
+          //onKeyUp={idCheck}
+        />
+        <div style={id_ == 0 ? { display: "block" } : { display: "none" }}>
+          아이디가 중복됩니다
+        </div>
+      </div>
+      <div className="InputPw">
+        <input
+          type="password"
+          path="pass"
+          placeholder="비밀번호"
+          id="pass"
+          name="pass"
+          value={pass}
+          onChange={handleInputPw}
+        />
+      </div>
+      <div className="InputPwCheck">
+        <input
+          type="password"
+          path="pass2"
+          placeholder="비밀번호 확인"
+          id="pass2"
+          name="pass2"
+          value={pass2}
+          onChange={handleInputPw2}
+          //onKeyUp={pwCheck}
+        />
+        <div style={pass_ == 0 ? { display: "block" } : { display: "none" }}>
+          비밀번호가 일치하지 않습니다
+        </div>
+      </div>
+      <div className="LoginBtn" onClick={onClickJoin}>
+        가입하기
+      </div>
+    </div>
+  );
 }
 
 export default Join;
