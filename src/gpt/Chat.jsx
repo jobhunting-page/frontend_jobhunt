@@ -3,10 +3,11 @@ import React, {useState, useRef, useEffect} from "react";
 import Header from "../js/Form/Header";
 import axios from "axios";
 import {IoMdSend} from "react-icons/io";
+import qs from 'qs';
 
 export default function Chat() {
   const [text, setText] = useState('');
-  const [chats, setChats] = useState([{id: 0, text:"hi", mine:true}, {id:1, text:"yes", mine:false}]);
+  const [chats, setChats] = useState([]);
   const [nextId, setNextId] = useState(0);
   const [mine, setMine] = useState();
   const [visible, setVisible] = useState(true);
@@ -21,7 +22,6 @@ export default function Chat() {
   };
 
   const submit = (e) => {
-    e.preventDefault();
     const chatList = chats.concat({
       id: nextId,
       text: text,
@@ -30,25 +30,23 @@ export default function Chat() {
     setNextId(nextId + 1);
     setChats(chatList);
     setText('');
-    setMine(true);
     console.log(chats);
-    console.log(text);
     
-    axios.post("http://localhost:8080/chat", {
+    axios.post("/api/chat",
+    qs.stringify({
       prompt: text
-    })
+    }), {headers: {"Content-type": "application/x-www-form-urlencoded;charset=utf-8"}})
     .then (function (response) {
       console.log(response);
       const data = response.data;
       console.log(data);
       const chatList = chats.concat({
       id: nextId,
-      text: response,
+      text: data,
       mine: false
     });
     setNextId(nextId + 1);
     setChats(chatList);
-    alert("성공");
     })
     .catch(function(error) {
       console.log(error);
