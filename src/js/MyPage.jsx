@@ -22,6 +22,12 @@ function MyPage() {
 function MyPageContent() {
   const ID = sessionStorage.getItem("tokenId")
   const [inputData, setInputData] = useState([])
+  const [myPageState, setMyPageState] = useState(false);
+
+  useEffect(() => {
+    run();
+  }, [myPageState])
+
   const run = () => {
     axios
         .get("/api/mypage", {
@@ -31,9 +37,9 @@ function MyPageContent() {
             }
         })
         .then((res) => {
-            console.log("!!", res.data);
-            console.log(sessionStorage.getItem("tokenId"));
-            console.log(sessionStorage.getItem("refreshTokenId"));
+            // console.log("!!", res.data);
+            // console.log(sessionStorage.getItem("tokenId"));
+            // console.log(sessionStorage.getItem("refreshTokenId"));
             setInputData(res.data)
 
             // if (res.data == true) {
@@ -42,13 +48,13 @@ function MyPageContent() {
             // } 
             if (res.data[0] === "false") {
                 sessionStorage.removeItem("tokenId")
-                console.log(res.data);
+                // console.log(res.data);
                 axios.get("/api/refresh", {
                     headers: {
                         refreshTokenId: `Bearer ${sessionStorage.getItem("refreshTokenId")}`
                     }
                 }).then((res) => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     sessionStorage.setItem("tokenId", res.data)
                     
                     if (res.data[0] == "false"){
@@ -92,7 +98,7 @@ function MyPageContent() {
 
 useEffect(run, []);
 
-  console.log(inputData);
+//   console.log(inputData);
 
   const jlink = (link, e) => {
     // console.log(link);
@@ -158,7 +164,8 @@ const bookmark = (e, companyname, plan, img, link) => {
 
 }
 
-const delete_bookmark= (e, companyname) => {
+const delete_bookmark= (e, companyname, id) => {
+    console.log("!!!!", id, sessionStorage.getItem("tokenId"));
   if (ID != null) {
       Swal.fire({
           title: '즐겨찾기 삭제를 하시겠습니까?',
@@ -178,15 +185,14 @@ const delete_bookmark= (e, companyname) => {
           if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
 
             axios
-            .post("/company-delete",
+            .delete(`/api/bookmark/delete/${id}`,
                 {
-                    companyname: companyname
-  
-                },{headers: {Authorization: `${sessionStorage.getItem("tokenId")}`}}
-                ).then(result=>{
-
-                    if(result.data==1){
-                      window.location.reload();
+                    headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem("tokenId")}`}
+                },
+                ).then(result => {
+                    if(result.data.data === 1){
+                      setMyPageState(!myPageState);
                     }
                     else{
                       console.log("삭제실패");
@@ -208,11 +214,16 @@ const delete_bookmark= (e, companyname) => {
                 color: #333D4B;
             `}> 관심을 가지고 있는 채용 공고를 한 눈에 보여드려요 </span>
             <div className="Card1">
-            <div className="c1image">
+            <div css={css`
+            margin-top: 3em;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            column-gap: 0.3em;
+        `}>
                 {inputData[0] && inputData[0].bookmark.map((v) => {
-                    console.log(v);
+                    // console.log(v);
                 let plan = v.bookMark_Start_Date + "~" + v.bookMark_End_Date;
-                return <ItemBox name={v.bookMarkName} plan={plan} link={v.company_link} img={v.bookMarkImg} />
+                return <ItemBox name={v.bookMarkName} plan={plan} link={v.company_link} img={v.bookMarkImg} id={v.user_bookmark_id}/>
             })}
             </div>
         </div>
@@ -226,37 +237,21 @@ const delete_bookmark= (e, companyname) => {
   function ItemBox(props) {
     return (
         <>
+        <div css={css`
+            display : flex;
+            width: 100%;
+            height: 100%;
+
+            justify-content: center;
+        `}>
+        <img src="img/delete.png" className="delete-img" width="14px" onClick={(e) => { delete_bookmark(e,props.name, props.id) }} css={css`
+            margin-top: 1.2em;
+            margin-right: 2em;
+            position: absolute;
+
+            cursor: pointer;
+        `}/>
         <Card title={props.name} plan={props.plan} content={props.content} src={props.img} link={props.link} state={props.state} onClick={(e) => { bookmark(e, props.name, props.plan, props.img, props.link, props.bookmark) }} bookmark={inputData[0]}/>
-        <div className="container">
-            <div className="card u-clearfix">
-                <div className="card-media" onClick={(e) => { jlink(props.link) }}>
-                    <img src={props.img} alt="" className="card-media-img" />
-                </div>
-                <img src="img/delete.png" className="delete-img" width="10px" onClick={(e) => { delete_bookmark(e,props.name) }}></img>
-
-                <div className="card-body">
-                    <h2 className="card-body-heading">{props.name}</h2>
-                    <div className="card-body-options">
-                        <div className="card-body-option card-body-option-favorite">
-                            <svg fill="#d12e46" height="26" viewBox="0 0 24 24" width="26" xmlns="http://www.w3.org/2000/svg" onClick={(e) => { bookmark(e, props.name, props.plan, props.img, props.link) }}>
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                            </svg>
-                        </div>
-                        <div className="card-body-option card-body-option-share">
-                            <svg fill="#9C948A" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z" />
-                            </svg>
-                        </div>
-                    </div>
-                    <br />
-                    <div className="card-button card-button-link">
-                        <span>{props.plan}</span>
-                    </div>
-                </div>
-
-            </div>
         </div>
         </>
 

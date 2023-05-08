@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import React, { useState, useEffect, useRef } from "react";
 import "./login.css";
 import axios from "axios";
@@ -86,7 +88,10 @@ function Login() {
                         );
                     }
                 })
-                .catch();
+                .catch((error) => {
+                    console.log(error.code);
+                    alert("아이디 또는 비번을 확인해주세요!");
+                });
         }
     };
 
@@ -120,9 +125,18 @@ function Login() {
                     ref={passRef}
                 />
             </div>
-            <div className="LoginBtn" onClick={onClickLogin}>
+            <button className="LoginBtn" onClick={onClickLogin} css={css`
+                ${(email && pass) ? css`
+                filter: grayscale(0%);
+                cursor: pointer;
+                ` : css`filter: grayscale(100%)`}
+                border: none;
+                transition: 0.4s all;
+                width: 25em;
+            `}
+            disabled={(email && pass) ? false : true}>
                 로그인
-            </div>
+            </button>
             <div className="LoginOption">
                 <ul className="option-list">
                     {/* <li className="list-item-text">
