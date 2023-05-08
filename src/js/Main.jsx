@@ -453,9 +453,7 @@ function MainContainer() {
             <div css={css`
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            column-gap: 4.7em;
-            row-gap: 3em;
-            margin-bottom: 4em;
+            column-gap: 0.3em;
             `}>
         <Card title={props.name} plan={props.plan} content={props.content} src={props.img} link={props.link} state={props.state} onClick={(e) => { bookmark(e, props.name, props.plan, props.img, props.link, props.bookmark) }} bookmark={userBookmark ? userBookmark[0] : null}/>
             {/*<div class="container" css={css`

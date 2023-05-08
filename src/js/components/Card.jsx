@@ -22,6 +22,7 @@ export default function Card({src, title, content, state, link, onClick, bookmar
         box-sizing: border-box;
         padding: 1.5em;
         box-sizing: border-box;
+        margin-bottom: 4em;
 
         display: flex;
         flex-direction: column;
