@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import "./join.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -122,6 +124,10 @@ function Join() {
         console.log("PW : ", pass);
         console.log("PW2 : ", pass2);
         console.log("nickname : ", nickname);
+        if (pass !== pass2) {
+          alert("입력하신 비밀번호가 일치하지 않아요!");
+          return;
+        }
         axios
           .post("/api/signup", {
             nickname: nickname,
@@ -169,7 +175,15 @@ function Join() {
 	  	<input type="password" path="pass2" placeholder="비밀번호 확인" id="pass2" name="pass2" value={pass2} onChange={handleInputPw2} onKeyUp={pwCheck} />
       <div style={ pass_ === 0 ? {display:"block"} : {display:"none"}}>비밀번호가 일치하지 않습니다</div>
 	  </div>
-	  <div className="LoginBtn" onClick={onClickJoin}>가입하기</div>
+	  <button className="LoginBtn" onClick={onClickJoin} css={css`
+      ${(email && nickname && pass && pass2) ? css`
+      filter: grayscale(0%);
+      cursor: pointer;
+      ` : css`filter: grayscale(100%)`}
+      border: none;
+      transition: 0.4s all;
+      width: 25em;
+    `} disabled={(email && nickname && pass && pass2) ? false : true}>가입하기</button>
 	</div>
   )
 }

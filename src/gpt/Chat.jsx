@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import "./Chat.css";
 import React, {useState, useRef, useEffect} from "react";
 import Header from "../js/Form/Header";
@@ -71,8 +73,20 @@ export default function Chat() {
     <body className="body">
       <Header />
     <div className="Container">
-        <h1 className="title">당신의 커리어를 입력해보세요</h1>
-        <p className="subTitle">면접 질문 예상부터 답변 피드백까지</p>
+      
+        <span css={css`
+                    display: block;
+                    font-family: 'Pretendard-ExtraBold';
+                    font-size: 2em;
+                    letter-spacing: -0.03em;
+                `}> 커리어 챗봇 서비스 </span>
+                <span css={css`
+                    display: block;
+                    font-family: 'Pretendard-Medium';
+                    font-size: 1em;
+                    letter-spacing: -0.03em;
+                    margin-bottom: 3em;
+                `}>면접 질문 예상부터 답변 피드백까지</span>
         <div className="chatGpt">
           <div className="chatBox">
             <div className="header">

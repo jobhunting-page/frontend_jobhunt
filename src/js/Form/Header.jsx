@@ -36,9 +36,9 @@ function Header() {
 			  {/* 로그인 후 메뉴 표시 */}
 			  {isLogin ? (
 				<li>
-				  <a className="menu" href="/mypage">
+				  <Link className="menu" to="/mypage">
 					{"마이페이지"}
-				  </a>
+				  </Link>
 				</li>
 			  ) : (
 				<li></li>
@@ -49,6 +49,7 @@ function Header() {
 					className="menu"
 					onClick={() => {
 					  sessionStorage.clear();
+					  window.location.reload();
 					}}
 					to="/"
 				  >
