@@ -1,64 +1,88 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
 import "./Chat.css";
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef} from "react";
 import Header from "../js/Form/Header";
 import axios from "axios";
 import {IoMdSend} from "react-icons/io";
 import qs from 'qs';
+import logo from '../images/logo.png';
 
 export default function Chat() {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [chats, setChats] = useState([]);
-  const [nextId, setNextId] = useState(0);
-  const [mine, setMine] = useState();
   const [visible, setVisible] = useState(true);
 
-  const chatInput = useRef();
   const textarea = useRef();
+  const nextId = useRef(0);
 
   const handleChatInput = (e) => {
     setText(e.target.value);
     textarea.current.style.height = 'auto';
     textarea.current.style.height = textarea.current.scrollHeight + 'px'; 
   };
+  
 
   const submit = (e) => {
+    const data = text;
     const chatList = chats.concat({
-      id: nextId,
-      text: text,
+      id: nextId.current,
+      text: data,
       mine: true
     });
-    setNextId(nextId + 1);
+    console.log(data);
     setChats(chatList);
     setText('');
-    console.log(chats);
-    
+    nextId.current += 1;
+    console.log(chatList);
     axios.post("/api/chat",
     qs.stringify({
       prompt: text
     }), {headers: {"Content-type": "application/x-www-form-urlencoded;charset=utf-8"}})
     .then (function (response) {
-      console.log(response);
       const data = response.data;
       console.log(data);
-      const chatList = chats.concat({
-      id: nextId,
+      const chatList2 = chats.concat({
+      id: nextId.current,
       text: data,
       mine: false
     });
-    setNextId(nextId + 1);
-    setChats(chatList);
+    /* setChats([...chatList, ...chatList2]);;
+    nextId.current += 1;
+    console.log(chats); */
+    const newChats = chatList.concat(chatList2)
+      .filter((chat, index, self) => self.findIndex(c => c.id === chat.id) === index);
+    setChats(newChats);
+    nextId.current += 1;
+    console.log(chats);
     })
     .catch(function(error) {
       console.log(error);
     })
 
-  }
+  };
+  
+  /*const uniqueChats = [];
+  chats.forEach((chat) => {
+    if (uniqueChats.findIndex((c) => c.id === chat.id) === -1) {
+      uniqueChats.push(chat);
+    }
+  });
+  
+  const myChat = uniqueChats.map((chat) => (
+    <div opacity="1" key={chat.id}>
+      <div className={chat.mine ? "me" : "gpt"}>
+        <span>
+          <p className={chat.mine ? "myText" : "gptText"}>{chat.text}</p>
+        </span>
+      </div>
+    </div>
+  ));*/
   
 
-
-  const myChat = chats.map((chat) =>  (
+  const myChat = chats
+  .filter((chat, index, self) => self.findIndex(c => c.id === chat.id) === index) // 중복된 id 제거
+  .map((chat) => (
     <div opacity="1" key={chat.id}>
       <div className={chat.mine ? "me" : "gpt"}>
         <span>
@@ -67,6 +91,7 @@ export default function Chat() {
       </div>
     </div>
   ));
+
 
   return (
     <html>
@@ -95,12 +120,12 @@ export default function Chat() {
                   <div className="name">
                     <div className="icon">
                     </div>
-                    <div className="career">커리어</div>
+                    <div className="career"><img src={logo} width="110em" height="30em"/></div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="chatting" ref={chatInput}>
+            <div className="chatting">
               {myChat}
             </div>
             <div className="search">
@@ -110,7 +135,7 @@ export default function Chat() {
                 value={text} ref={textarea}></textarea>
                 {visible && <div className="placeholder">말을 걸어보세요</div>}
               </div>
-              <button className="btn" onClick={submit}><IoMdSend className="send"/></button>
+              <button type="button" className="btn" onClick={ (e) => {submit();}}><IoMdSend className="send"/></button>
             </div>
       </div>
       

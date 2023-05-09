@@ -6,11 +6,14 @@ import { FaRegAddressCard } from "react-icons/fa";
 import { BiPencil } from "react-icons/bi";
 import { TiThumbsUp } from "react-icons/ti";
 import { FaRegComment } from "react-icons/fa";
-import { useState } from "react";
-import Moment from "moment";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
 
 export default function Board() {
+  const [isLogin, setIsLogin] = useState('');
   const [posts, setPosts] = useState([
     {
       username: "익명",
@@ -39,17 +42,44 @@ export default function Board() {
     },
   ]);
 
+  const navigate = useNavigate();
+
+  useEffect (() => {
+    axios
+        .get("/api/board/list",{
+            headers: {
+                Authorization: `Bearer ${sessionStorage.getItem("tokenId")}`,
+                refreshTokenId: `Bearer ${sessionStorage.getItem("refreshTokenId")}`,
+            }
+        })
+        .then((res) => {
+          const data = res.data.data;
+            console.log("!!", data);
+            setIsLogin(true);
+            setPosts(data);
+        }).catch((err) => {
+          Swal.fire({
+            icon: 'error',
+            title: '로그인 후 이용해주세요',
+            // timer: 100000,
+        }).then(result => {
+          if (result.isConfirmed) {
+              navigate('/login');
+          }})
+          console.log(err);
+        })
+  }, [])
+
   const Post = posts.map((post) => (
-    <article className="board-post">
+    <article className="board-post" key={post.id}>
       <div className="post-nickname">
         <div className="post-informations">
           <div className="post-information">
             <div className="post-info">
               <div className="post-infoInside">
-                <div className="post-username">{post.username}</div>
+                <div className="post-username">{post.writer}</div>
                 <div className="post-userInfo">
                   <div className="post-userSubject">{post.subject}</div>
-                  <div className="post-userGrade">{post.grade}</div>
                 </div>
               </div>
               <span className="post-time"></span>
@@ -59,15 +89,15 @@ export default function Board() {
       </div>
       <a className="post-link">
         <h3 className="post-linkTitle">{post.title}</h3>
-        <p className="post-content">{post.content}</p>
+        <p className="post-content">{post.preview}</p>
         <div className="post-icons">
           <div className="post-good">
             <TiThumbsUp className="thumb" />
-            <div className="thumbCount">{post.good}</div>
+            <div className="thumbCount">0</div>
           </div>
           <div className="post-comment">
             <FaRegComment className="post-commentIcon" />
-            <div className="post-commentCount">{post.comment}</div>
+            <div className="post-commentCount">0</div>
           </div>
         </div>
       </a>
@@ -80,6 +110,7 @@ export default function Board() {
       <SlArrowRight className="profileLink" />
     </a>
   ));
+
 
   return (
     <>
@@ -135,6 +166,7 @@ export default function Board() {
                 </div>
               </div>
               <div className="board-mainBox">
+                <Link to="/form">
                 <section className="board-writePost">
                   <button type="button" className="board-writeBtn">
                     "자신의 커리어에 대해 자유롭게 이야기 해주세요!"
@@ -143,22 +175,18 @@ export default function Board() {
                     </span>
                   </button>
                 </section>
+                </Link>
                 <section className="board-posts">
-                  {Post}
-                  {Post}
-                  {Post}
-                  {Post}
-                  {Post}
-                  {Post}
-                  {Post}
                   {Post}
                 </section>
               </div>
             </main>
             <div className="board-floatingButton">
+              <Link to="/form">
               <button type="button" className="board-writeButton">
                 <BiPencil className="board-pencilButton" />
               </button>
+              </Link>
             </div>
           </div>
         </div>

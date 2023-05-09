@@ -1,0 +1,292 @@
+.formMain {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.formWrite {
+    position: relative;
+    width: 100%;
+}
+@media (max-width: 767px) {
+    .formWrite{
+        padding-top: 0;
+    }
+}
+
+.formWritePaper {
+    display: flex;
+    flex-direction: column;
+    padding: 39px 40px;
+    border: 1px solid #e1e2e3;
+    border-radius: 20px;
+    background-color: #fff;
+}
+@media (max-width: 767px) {
+    .formWritePaper {
+        width: 100%;
+        min-height: fit-content;
+        padding: 20px 15px;
+        border: 0;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .formWritePaper {
+        max-width: 790px;
+        margin: 50px auto;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .formWritePaper {
+        max-width: 790px;
+        margin: 50px auto;
+    }
+}
+@media (min-width: 1200px) {
+    .formWritePaper {
+        max-width: 790px;
+        margin: 50px auto;
+    }
+}
+
+.formWriteTitle {
+    display: flex;
+    width: 100%;
+    border-bottom: 2px solid #e1e2e3;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 25px;
+    position: relative;
+}
+@media (max-width: 767px) {
+    .formWriteTitle {
+        border-bottom: 1px solid #e1e2e3;
+        font-size: 15px;
+        line-height: 25px;
+    }
+}
+
+.formWritePreview {
+    display: flex;
+    width: 100%;
+    padding-top: 20px;
+    border-bottom: 2px solid #e1e2e3;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 25px;
+    position: relative;
+}
+@media (max-width: 767px) {
+    .formWritePreview {
+        border-bottom: 1px solid #e1e2e3;
+        font-size: 5px;
+        line-height: 12px;
+    }
+}
+
+.formWritePreviewText {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    resize: none;
+    overflow: hidden;
+}
+@media (max-width: 767px) {
+    .fromWritePreviewText {
+        height: 25px;
+    }
+}
+
+.formWriteTitleText {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    resize: none;
+    overflow: hidden;
+}
+@media (max-width: 767px) {
+    .formWriteTitleText {
+        height: 25px;
+    }
+}
+
+.formWriteContent {
+    width: 100%;
+    height: 100%;
+    padding-top: 28px;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 28px;
+}
+@media (max-width: 767px) {
+    .formWriteContent {
+        padding-top: 16px;
+        padding-bottom: 65px;
+        font-size: 10px;
+        line-height: 25px;
+    }
+}
+
+.formWriteContentText {
+    position: relative;
+    height: 100%;
+}
+
+.form-Content {
+    height: 300px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    outline: 0;
+    resize: none;
+    overflow: hidden;
+}
+
+.formSubmit {
+    display: flex;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    height: 95px;
+    justify-content: center;
+    margin: 0 auto;
+}
+@media (max-width: 767px) {
+    .formSubmit {
+        width: 100%;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .formSubmit {
+        max-width: 790px;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .formSubmit {
+        max-width: 790px;
+    }
+}
+@media (min-width: 1200px) {
+    .formSubmit {
+        max-width: 750px;
+    }
+}
+
+.submitPadding {
+    display: block;
+    width: 100%;
+    height: 30px;
+}
+
+.formSubmitButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 65px;
+    padding: 0 15px 15px;
+    background-color: #fff;
+}
+
+.form-button {
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    border: none;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    min-width: 64px;
+    padding: 0 27px;
+    box-sizing: border-box;
+    border-radius: 25px;
+    font-weight: 700;
+    line-height: normal;
+    cursor: pointer;
+    background-color: #35f;
+    color: #fff;
+}
+.form-button:disabled {
+    background-color: #f2f4f7;
+    color: #c4c4c4;
+}
+@media (max-width: 767px) {
+    .form-button {
+        width: 100%;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .form-button {
+        max-width: 790px;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .form-button {
+        max-width: 790px;
+    }
+}
+@media (min-width: 1200px) {
+    .form-button {
+        max-width: 750px;
+    }
+}
+
+
+.formSubmitText {
+    width: 100%;
+    font-size: inherit;
+    font-weight: inherit;
+    display: inherit;
+    align-items: inherit;
+    justify-content: inherit;
+    color: inherit;
+}
+
+.formWriteSubject {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+}
+
+.formSubject input {
+    font-size: 15px;
+  width: 80px;
+  height: 30px;
+  border-radius: 50px;
+  border: solid;
+  margin-bottom: 30px;
+  border-color: #e6e8ea;
+  border-width: 0.0789em;
+  font-family: 'Pretendard-Regular';
+  letter-spacing: -0.03em;
+  transition: 0.4s all;
+  outline-color: #4F85E8;
+  text-align: center;
+}
+
+.formSubject input:focus {
+    border: 1px solid #4F85E8;
+    .formWritePaper {
+        border: 1px solid #4F85E8;
+    }
+  }
+  

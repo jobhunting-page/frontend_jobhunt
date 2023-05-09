@@ -6,6 +6,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import logo from '../../images/logo.png';
 import { useNavigate } from "react-router-dom";
+import qs from 'qs';
 
 function Join() {
   const [email, setInputEmail] = useState("");
@@ -21,6 +22,13 @@ function Join() {
   let [id_, setId] = useState();
   let [pass_, setPass] = useState();
   let [nickname_, setNickName] = useState();
+  const [emailCheck, setEmailCheck] = useState();
+  const [code, setCode] = useState();
+  const [codeInput, setCodeInput] = useState('');
+  const [isConfirm, setConfirm] = useState(0);
+  const [isActive, setIsActive] = useState(0);
+  const [emailWaiting, setEmailWaiting] = useState(true);
+
 
   const navigate = useNavigate();
 
@@ -59,6 +67,15 @@ function Join() {
   const handleInputPhone = (e) => {
     setInputPhone(e.target.value);
   };
+
+  const handeInputEmailCheck = (e) => {
+    setEmailCheck(e.target.value);
+  }
+
+  const handeInputCode = (e) => {
+    setCodeInput(e.target.value);
+  }
+
 
   const idCheck = () => {
     // axios
@@ -116,6 +133,44 @@ function Join() {
     //   })
     //   .catch();
   };
+
+  const onClickEmailCheck = () => {
+    const jsonData = JSON.stringify(emailCheck);
+    axios({
+      method: 'post',
+      url: '/api/mail',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: jsonData
+    }).then((res) => {
+      setEmailWaiting(false);
+      const data = res.data;
+      console.log(data);
+      setCode(data);
+      setConfirm(1);
+      console.log(emailWaiting);
+    }).catch((err) => {
+      console.log(err);
+    })
+    if (emailWaiting) {
+      setTimeout( () => {
+        setEmailWaiting(true);
+      }, 30000)
+    }
+  }
+  const onClickCodeCheck = () => {
+    
+    if (code == codeInput) {
+      setIsActive(1);
+    }
+    else {
+      Swal.fire({
+        icon: 'warning',
+        title: '인증번호가 올바르지 않습니다!',
+    })
+    }
+  }
 
   const onClickJoin = () => {
     // alert(email, pass, pass2, nickname, sex, birth, phone)
@@ -175,15 +230,15 @@ function Join() {
 	  	<input type="password" path="pass2" placeholder="비밀번호 확인" id="pass2" name="pass2" value={pass2} onChange={handleInputPw2} onKeyUp={pwCheck} />
       <div style={ pass_ === 0 ? {display:"block"} : {display:"none"}}>비밀번호가 일치하지 않습니다</div>
 	  </div>
-	  <button className="LoginBtn" onClick={onClickJoin} css={css`
-      ${(email && nickname && pass && pass2) ? css`
-      filter: grayscale(0%);
-      cursor: pointer;
-      ` : css`filter: grayscale(100%)`}
-      border: none;
-      transition: 0.4s all;
-      width: 25em;
-    `} disabled={(email && nickname && pass && pass2) ? false : true}>가입하기</button>
+    <div className="InputEmail">
+	  	<input type="text" path="emailCheck" placeholder="이메일 인증" id="emailCheck" name="emailCheck" value={emailCheck} onChange={handeInputEmailCheck} required/>
+      <button className="EmailBtn" onClick={onClickEmailCheck} disabled={!(emailCheck  && emailWaiting)}>이메일 전송</button>
+	  </div>
+    <div className="InputEmail">
+	  	<input type="text" path="codeInput" placeholder="인증번호" id="codeInput" name="codeInput" value={codeInput} onChange={handeInputCode} required/>
+      <button className="EmailBtn" onClick={onClickCodeCheck} disabled={!(isConfirm)}>인증하기</button>
+	  </div>
+    <button className="LoginBtn" onClick={onClickJoin} disabled={!isActive}>가입하기</button>
 	</div>
   )
 }
