@@ -81,7 +81,7 @@ function Login() {
                             // timer: 100000,
                         }).then((q) => {
                             if (q.isConfirmed) {
-                                navigate('/');
+                                window.location.href = "/";
                             }
                         }
 
