@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 
 
 export default function Board() {
+  const [isLogin, setIsLogin] = useState('');
   const [posts, setPosts] = useState([
     {
       username: "익명",
@@ -54,8 +55,8 @@ export default function Board() {
         .then((res) => {
           const data = res.data.data;
             console.log("!!", data);
+            setIsLogin(true);
             setPosts(data);
-
         }).catch((err) => {
           Swal.fire({
             icon: 'error',
