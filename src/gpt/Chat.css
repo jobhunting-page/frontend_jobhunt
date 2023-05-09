@@ -34,6 +34,7 @@ p{
 .title {
     font-weight: 700;
     margin: 0;
+    font-size: 1.4rem;
     margin-block-start: 0.67em;
     margin-block-end: 0.67em;
     margin-inline-start: 0px;
@@ -42,14 +43,14 @@ p{
 @media screen and (max-width: 767px) {
     .title{
         line-height: 1.39;
-        font-size: 1.75rem;
+        font-size: 1.25rem;
         margin-bottom: 0.9375rem;
     }
 }
 
 .subTitle {
     font-weight: 500;
-    font-size: 1.125rem;
+    font-size: 1rem;
     line-height: 24px;
     display: block;
 }
@@ -89,7 +90,7 @@ p{
     align-items: center;
     flex-direction: row;
     width: 100%;
-    padding: 1rem 1.5rem;
+    padding: 1rem 0.5rem 0.5rem;
     border-bottom: 1px solid #e8e8e8;
 }
 
