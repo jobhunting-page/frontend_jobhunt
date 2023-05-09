@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react'
 import "./join.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -177,6 +179,10 @@ function Join() {
         console.log("PW : ", pass);
         console.log("PW2 : ", pass2);
         console.log("nickname : ", nickname);
+        if (pass !== pass2) {
+          alert("입력하신 비밀번호가 일치하지 않아요!");
+          return;
+        }
         axios
           .post("/api/signup", {
             nickname: nickname,

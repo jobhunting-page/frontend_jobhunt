@@ -13,6 +13,7 @@ import Card from './components/Card';
 import { useNavigate } from 'react-router-dom';
 import rocket from '../images/rocket.gif';
 
+
 function Main() {
     return (
         <div className="Main">
@@ -53,6 +54,8 @@ function MainContainer() {
     function callback(str) {
         setMessage(str);
     }
+
+    
 
     useEffect(() => {
 
@@ -154,6 +157,12 @@ function MainContainer() {
         Cname: '',
         content: ''
     }]);
+    const [bookmarkState, setBookMarkState] = useState(false);
+
+    useEffect(() => {
+        run();
+    }, [bookmarkState]);
+    
 
     useEffect(() => {
 
@@ -213,6 +222,8 @@ function MainContainer() {
     }
 
     const bookmark = (e, companyname, plan, img, link) => {
+        console.log("!!!!", ID);
+
         if (ID === null) {
             Swal.fire({
                 title: '즐겨찾기 기능은 <br/> 로그인 후 가능합니다!',
@@ -262,6 +273,7 @@ function MainContainer() {
                             title: '즐겨찾기 Success',
                             // timer: 100000,
                         })
+                        setBookMarkState(!bookmarkState);
                     } else if (result.data.data === 2) {
                         Swal.fire({
                             icon: 'error',
@@ -453,9 +465,7 @@ function MainContainer() {
             <div css={css`
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            column-gap: 4.7em;
-            row-gap: 3em;
-            margin-bottom: 4em;
+            column-gap: 0.3em;
             `}>
         <Card title={props.name} plan={props.plan} content={props.content} src={props.img} link={props.link} state={props.state} onClick={(e) => { bookmark(e, props.name, props.plan, props.img, props.link, props.bookmark) }} bookmark={userBookmark ? userBookmark[0] : null}/>
             {/*<div class="container" css={css`
