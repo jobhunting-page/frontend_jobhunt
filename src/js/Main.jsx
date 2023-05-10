@@ -270,14 +270,14 @@ function MainContainer() {
                     if (result.data.data === 1) {
                         Swal.fire({
                             icon: 'success',
-                            title: '즐겨찾기 Success',
+                            title: '성공적으로 즐겨찾기를 했어요!',
                             // timer: 100000,
                         })
                         setBookMarkState(!bookmarkState);
                     } else if (result.data.data === 2) {
                         Swal.fire({
                             icon: 'error',
-                            title: '이미 즐겨찾기가 되어있습니다.',
+                            title: '이미 즐겨찾기가 되어있습니다!',
                             // timer: 100000,
                         })
                     } else {

@@ -267,7 +267,23 @@
     gap: 20px;
 }
 
-.formSubject input {
+#formTag {
+    font-size: 15px;
+  width: 100px;
+  height: 30px;
+  border-radius: 50px;
+  border: solid;
+  margin-bottom: 30px;
+  border-color: #e6e8ea;
+  border-width: 0.0789em;
+  font-family: 'Pretendard-Regular';
+  letter-spacing: -0.03em;
+  transition: 0.4s all;
+  outline-color: #4F85E8;
+  text-align: center;
+}
+
+#formWriter {
     font-size: 15px;
   width: 80px;
   height: 30px;

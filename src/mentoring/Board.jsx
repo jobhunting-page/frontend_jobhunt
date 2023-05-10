@@ -10,9 +10,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Detail from "../mentoring/Detail";
+import jwtDecode from 'jwt-decode';
 
 
 export default function Board() {
+  const [user, setUser] = useState();
   const [isLogin, setIsLogin] = useState('');
   const [posts, setPosts] = useState([
     {
@@ -45,6 +48,7 @@ export default function Board() {
   const navigate = useNavigate();
 
   useEffect (() => {
+    const username = window.sessionStorage.getItem('user');
     axios
         .get("/api/board/list",{
             headers: {
@@ -54,9 +58,15 @@ export default function Board() {
         })
         .then((res) => {
           const data = res.data.data;
-            console.log("!!", data);
-            setIsLogin(true);
-            setPosts(data);
+          console.log(username);
+          if (username != null)
+            setUser(username);
+          else
+            setUser('로그인 해주세요');
+            //console.log("!!", data);
+          setIsLogin(true);
+          setPosts(data);
+            //console.log(res);
         }).catch((err) => {
           Swal.fire({
             icon: 'error',
@@ -87,7 +97,7 @@ export default function Board() {
           </div>
         </div>
       </div>
-      <a className="post-link">
+      <Link to= {`/detail/${post.id}`} state= {{ post: post}}>
         <h3 className="post-linkTitle">{post.title}</h3>
         <p className="post-content">{post.preview}</p>
         <div className="post-icons">
@@ -100,7 +110,7 @@ export default function Board() {
             <div className="post-commentCount">0</div>
           </div>
         </div>
-      </a>
+      </Link>
     </article>
   ));
 
@@ -127,9 +137,9 @@ export default function Board() {
                     <div className="board-profile">
                       <BsPersonFill className="image" />
                     </div>
-                    <Link to="/login">
+                    <Link to={user == "로그인 해주세요" ? "/login" : "/mypage"}>
                       <div className="profileLogin">
-                        <span className="loginText">로그인 해주세요</span>
+                        <span className="loginText">{user}</span>
                       </div>
                     </Link>
                     <span className="link">

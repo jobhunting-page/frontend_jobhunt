@@ -57,6 +57,7 @@
   cursor: pointer;
   font-family: 'Pretendard-Bold';
   border: none;
+  transition: 0.4s all;
 }
 
 .JoinForm input:focus {

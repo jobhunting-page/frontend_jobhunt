@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import logo from '../../images/logo.png';
 import { useNavigate } from "react-router-dom";
 import qs from 'qs';
+import { useRef } from 'react';
 
 function Join() {
   const [email, setInputEmail] = useState("");
@@ -19,16 +20,50 @@ function Join() {
   const [idMes, setIdMes] = useState("");
   const [passMes, setPassMes] = useState("");
   const [nickNameMes, setNickNameMes] = useState("");
+  const emailRef = useRef(null);
   let [id_, setId] = useState();
   let [pass_, setPass] = useState();
   let [nickname_, setNickName] = useState();
   const [emailCheck, setEmailCheck] = useState();
+  const [emailFirstClick, setEmailFirstClick] = useState(false);
   const [code, setCode] = useState();
   const [codeInput, setCodeInput] = useState('');
   const [isConfirm, setConfirm] = useState(0);
   const [isActive, setIsActive] = useState(0);
   const [emailWaiting, setEmailWaiting] = useState(true);
 
+  const [min, setMin] = useState(3);
+  const [sec, setSec] = useState(0);
+  const time = useRef(180);
+  const timerId = useRef(null);
+  const [timerState, setTimerState] = useState(false);
+
+  useEffect(() => {
+    if (min === 0 && sec  === 0) {
+      if (time.current <= 0) {
+        alert("시간이 초과되었습니다, 다시 메일을 전송해주세요!");
+        setCodeInput('');
+        setEmailWaiting(true);
+        setTimerState(false);
+        time.current = 180;
+        console.log(time);
+        clearInterval(timerId.current);
+      }
+    }
+  }, [sec]);
+
+  useEffect(() => {
+    if (timerState) {
+      setMin(parseInt(time.current / 60));
+      setSec(time.current % 60);
+      timerId.current = setInterval(() => {
+        setMin(parseInt(time.current / 60));
+        setSec(time.current % 60);
+        time.current -= 1;
+      }, 1000);
+      return () => clearInterval(timerId.current);
+    }
+  }, [timerState])
 
   const navigate = useNavigate();
 
@@ -75,7 +110,6 @@ function Join() {
   const handeInputCode = (e) => {
     setCodeInput(e.target.value);
   }
-
 
   const idCheck = () => {
     // axios
@@ -135,34 +169,49 @@ function Join() {
   };
 
   const onClickEmailCheck = () => {
-    const jsonData = JSON.stringify(emailCheck);
-    axios({
-      method: 'post',
-      url: '/api/mail',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: jsonData
-    }).then((res) => {
-      setEmailWaiting(false);
-      const data = res.data;
-      console.log(data);
-      setCode(data);
-      setConfirm(1);
-      console.log(emailWaiting);
-    }).catch((err) => {
-      console.log(err);
-    })
-    if (emailWaiting) {
-      setTimeout( () => {
-        setEmailWaiting(true);
-      }, 30000)
+    console.log(emailRef.current.innerText);
+    setIsActive(0);
+    const EMAIL_REGEX = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+    if (!emailCheck.match(EMAIL_REGEX)) {
+      alert("정확한 이메일을 입력해주세요!");
+      return;
+    } else {
+      time.current = 180;
+      setTimerState(!timerState);
+      setEmailFirstClick(true);
+
+      const jsonData = JSON.stringify(emailCheck);
+      axios({
+        method: 'post',
+        url: '/api/mail',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: jsonData
+      }).then((res) => {
+        alert("인증번호가 담긴 메일을 이메일로 보내드렸어요!");
+        setEmailWaiting(false);
+        setEmailFirstClick(false);
+        setTimerState(true);
+        const data = res.data;
+        console.log(data);
+        setCode(data);
+        setConfirm(1);
+        console.log(emailWaiting);
+      }).catch((err) => {
+        alert("에러가 발생했어요, 관리자에게 문의해주세요!", err);
+      })
+      setEmailWaiting(true);
     }
   }
   const onClickCodeCheck = () => {
-    
+
     if (code == codeInput) {
+      alert("인증이 완료되었습니다!");
+      clearInterval(timerId.current);
+      setCodeInput('');
       setIsActive(1);
+      setEmailWaiting(true);
     }
     else {
       Swal.fire({
@@ -197,13 +246,16 @@ function Join() {
                 // timer: 100000,
             }).then((q) => {
               if(q.isConfirmed){
-                navigate('/');
+                navigate('/login');
               }
             }
             );
           })
           .catch((error) => {
-            alert(`에러가 발생했어요! ${error}`);
+            if (error.code === "ERR_BAD_REQUEST") {
+              alert("이미 존재하는 계정입니다, 관리자에게 문의해주세요!");
+            }
+            console.log(error);
           });
   };
   
@@ -231,15 +283,48 @@ function Join() {
       <div style={ pass_ === 0 ? {display:"block"} : {display:"none"}}>비밀번호가 일치하지 않습니다</div>
 	  </div>
     <div className="InputEmail">
-	  	<input type="text" path="emailCheck" placeholder="이메일 인증" id="emailCheck" name="emailCheck" value={emailCheck} onChange={handeInputEmailCheck} required/>
-      <button className="EmailBtn" onClick={onClickEmailCheck} disabled={!(emailCheck  && emailWaiting)}>이메일 전송</button>
-	  </div>
+	  	<input type="text" path="emailCheck" placeholder="이메일 인증" id="emailCheck" name="emailCheck" disabled={!emailWaiting ? true : false} value={emailCheck} onChange={handeInputEmailCheck} required css={css`
+        ${!emailWaiting ? css`
+        background-color: #f4f4f5;
+        color: #969696;
+        filter: grayscale(100%);` : 
+        css`
+        background-color: transparent;
+        color: black;
+        filter: grayscale(0%);
+        `
+      }
+      `}/>
+      <button className="EmailBtn" onClick={onClickEmailCheck} disabled={!(emailCheck  && emailWaiting) || emailFirstClick ? true : false} ref={emailRef}> {emailFirstClick ? `요청중..` : `이메일 전송`}</button>
+    </div>
+    {isActive === 1 ?
+    <div className="InputEmail" css={css`
+      font-family: 'Pretendard-Medium';
+      color: #11BD7E;
+      font-size: 14px;
+      padding-left: 0.5em;
+      margin-top: 0.5em;
+      margin-bottom: -1em;
+    `}> 이메일 인증이 완료되었어요! </div>
+    : null} 
+    { !emailWaiting ? 
     <div className="InputEmail">
 	  	<input type="text" path="codeInput" placeholder="인증번호" id="codeInput" name="codeInput" value={codeInput} onChange={handeInputCode} required/>
+      <span css={css`
+      ${!emailWaiting ? css`display: block;` : css` display: none;`}
+      position: absolute;
+      font-family: 'Pretendard-Medium';
+      font-size: 15px;
+      margin-top: 2.95em;
+      margin-left: 19.3em;
+    `}> 0{min}:{sec / 10 >= 1 ? sec : `0${sec}`} </span>
       <button className="EmailBtn" onClick={onClickCodeCheck} disabled={!(isConfirm)}>인증하기</button>
-	  </div>
-    <button className="LoginBtn" onClick={onClickJoin} disabled={!isActive}>가입하기</button>
-	</div>
+    </div>
+    : null }
+    <button css={css`
+      cursor: pointer;
+    `}className="LoginBtn" onClick={onClickJoin} disabled={!isActive}>가입하기</button>
+	</div> 
   )
 }
 
