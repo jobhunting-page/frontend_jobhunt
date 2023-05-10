@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
 import "./Chat.css";
-import React, {useState, useRef} from "react";
+import {useState, useRef} from "react";
 import Header from "../js/Form/Header";
 import axios from "axios";
 import {IoMdSend} from "react-icons/io";

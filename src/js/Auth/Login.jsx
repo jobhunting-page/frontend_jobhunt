@@ -71,7 +71,7 @@ function Login() {
                         // id, pw 모두 일치 userId = userId1, msg = undefined
                         // console.log(res.data);
                         sessionStorage.setItem("tokenId", res.data.token); 
-
+                        window.sessionStorage.setItem("user", email);
                         sessionStorage.setItem("refreshTokenId", res.data.refresh_token); // sessionStorage에 id를 user_id라는 key 값으로 저장
 
                         console.log("======================", "로그인 성공");

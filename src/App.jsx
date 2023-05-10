@@ -8,6 +8,7 @@ import GlobalStyles from './style/GlobalFont';
 import Chat from './gpt/Chat';
 import Board from './mentoring/Board';
 import Form from './mentoring/Form';
+import Detail from './mentoring/Detail';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path='/chat' element={<Chat/>}/>
         <Route path='/board' element={<Board/>}/>
         <Route path="/form" element={<Form />} />
+        <Route path="/detail/:id" element={<Detail />} />
       </Routes>
     </BrowserRouter>
   );

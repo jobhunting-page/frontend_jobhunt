@@ -1,12 +1,5 @@
-html {
-    -webkit-text-size-adjust: 100%;
-    line-height: 1.15;
-}
 body * {
     box-sizing: border-box;
-}
-body {
-    color: #111f34;
 }
 p{
     margin-block-start: 1em;
