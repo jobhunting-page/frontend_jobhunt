@@ -109,6 +109,7 @@
     display: grid;
     flex-direction: column;
     row-gap: 14px;
+    
 }
 
 .board-myCommunity {

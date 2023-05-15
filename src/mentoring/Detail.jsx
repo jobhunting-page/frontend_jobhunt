@@ -2,9 +2,21 @@ import {useState, useRef} from "react";
 import "./Detail.css";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import Header from "../js/Form/Header";
+
+import jwtDecode from 'jwt-decode';
+
+
+
 
 
 export default function Detail() {
+
+
+
+
+    
+
     const [title, setTitle] = useState();
     const [tag, setTag] = useState();
     const [content, setContent] = useState();
@@ -18,7 +30,10 @@ export default function Detail() {
     console.log(location.state);
 
     return (
+        <>
+        <Header />
         <div className="formMain">
+
             <form id="form">
                 <div className="detailWrite">
                     <div className="detailPaper">
@@ -43,5 +58,7 @@ export default function Detail() {
                 </div>
             </form> 
         </div>
+
+        </>
     )
 }
